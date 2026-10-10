@@ -3,10 +3,10 @@ from fastapi import FastAPI
 
 app = FastAPI(
     title="Disk Usage",
-    description="Simple host filesystem usage endpoint",
+    description="Simple filesystem usage endpoint",
 )
 
-def get_disk_usage(path: str = "/host") -> int:
+def get_disk_usage(path: str = "/") -> int:
     stats = os.statvfs(path)
 
     total = stats.f_blocks * stats.f_frsize
