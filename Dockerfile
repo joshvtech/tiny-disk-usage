@@ -1,13 +1,26 @@
-FROM python:3.12-slim
+# ---- Build stage ----
+FROM ghcr.io/astral-sh/uv:python3.12-bookworm-slim AS builder
 
 WORKDIR /app
 
-COPY requirements.txt .
+ENV UV_COMPILE_BYTECODE=1 \
+    UV_LINK_MODE=copy
 
-RUN pip install --no-cache-dir -r requirements.txt
+COPY pyproject.toml uv.lock ./
+RUN uv sync --frozen --no-install-project --no-dev
 
-COPY app.py .
+COPY . .
+RUN uv sync --frozen --no-dev
 
-EXPOSE 8000
+# ---- Runtime stage ----
+FROM python:3.12-slim-bookworm
 
-CMD ["uvicorn", "app:app", "--host", "0.0.0.0", "--port", "8000"]
+WORKDIR /app
+
+# Copy the virtual environment from the builder
+COPY --from=builder /app/.venv /app/.venv
+COPY --from=builder /app /app
+
+ENV PATH="/app/.venv/bin:$PATH"
+
+CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]

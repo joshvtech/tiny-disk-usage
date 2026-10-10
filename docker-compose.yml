@@ -1,11 +1,10 @@
 services:
-  disk-usage:
-    build: .
-    container_name: disk-usage
+  api:
+    image: ghcr.io/joshvtech/tiny-disk-usage:latest
+
+    container_name: tiny-disk-usage
+
     restart: unless-stopped
 
     ports:
       - "8000:8000"
-
-    volumes:
-      - /:/host:ro

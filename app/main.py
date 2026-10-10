@@ -6,7 +6,6 @@ app = FastAPI(
     description="Simple host filesystem usage endpoint",
 )
 
-
 def get_disk_usage(path: str = "/host") -> int:
     stats = os.statvfs(path)
 
@@ -19,11 +18,9 @@ def get_disk_usage(path: str = "/host") -> int:
 
     return round((used / total) * 100)
 
-
 @app.get("/")
 def disk_usage() -> dict[str, int]:
     return {"usage": get_disk_usage()}
-
 
 @app.get("/health")
 def health() -> dict[str, str]:
